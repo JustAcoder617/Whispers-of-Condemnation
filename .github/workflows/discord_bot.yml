@@ -21,9 +21,9 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-color: 3447003
-          content: "😎️😏️🏗️💯️💻️🔥️: MAIS UM BRABO DEU COMMIT!"
+          content: "😎️😏️🏗️💯️💻️🔥️: @everyone, MAIS UM BRABO DEU COMMIT!"
           embed-description: |
-            @Everyone!!! O brabo ```fix
+            O brabo ```fix
             ${{ github.actor }}
             ``` fez o commit ```diff
             + ${{ github.event.head_commit.message }}

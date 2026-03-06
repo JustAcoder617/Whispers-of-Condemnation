@@ -23,7 +23,7 @@ jobs:
           embed-color: 3447003
           content: "😎️😏️🏗️💯️💻️🔥️: MAIS UM BRABO DEU COMMIT!"
           embed-description: |
-            O brabo ```fix
+            @Everyone!!! O brabo ```fix
             ${{ github.actor }}
             ``` fez o commit ```diff
             + ${{ github.event.head_commit.message }}

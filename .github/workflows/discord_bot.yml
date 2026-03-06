@@ -19,9 +19,9 @@ jobs:
       - name: Discord Webhook Action
         uses: tsickert/discord-webhook@v5.3.0
         with:
-          embed-thumbnail-url: "https://github.githubassets.com/images/modules/logos_page/Octocat.png"
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-color: 3447003
+          embed-thumbnail-url: "https://github.githubassets.com/images/modules/logos_page/Octocat.png"
           content: "😎️😏️🏗️💯️💻️🔥️: @everyone, MAIS UM BRABO DEU COMMIT!"
           embed-description: |
             O brabo ```fix

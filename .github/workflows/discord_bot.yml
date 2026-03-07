@@ -22,16 +22,16 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-color: 3447003
           embed-thumbnail-url: "https://github.githubassets.com/images/modules/logos_page/Octocat.png"
-          content: "😎️😏️🏗️💯️💻️🔥️: @everyone, MAIS UM BRABO DEU COMMIT!"
+          content: "😎️😏️🏗️💯️💻️🔥️: @everyone, ANOTHER LEGEND JUST PUSHED CODE!"
           embed-description: |
-            O brabo ```fix
+            The GOAT ```fix
             ${{ github.actor }}
-            ``` fez o commit ```diff
+            ``` just committed ```diff
             + ${{ github.event.head_commit.message }}
-            ``` no repo ```ini
+            ``` in the repo ```ini
             [${{ github.repository }}]
-            ``` as ```bash
+            ``` at ```bash
             "${{ github.event.head_commit.timestamp }}"
-            ```!! Esse é o commit número ```yaml
+            ```!! This is commit number ```yaml
             ${{ steps.count.outputs.total }}
-            ``` do repo.
+            ``` for this repo.

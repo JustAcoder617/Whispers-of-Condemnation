@@ -8,7 +8,7 @@
 void inicio(char *user_login);
 void jogo(char jg1[], char jg2[], char *user_login);
 void avaliacao(char *user_login);
-void disparar_webhook(char *texto, char *user_login);
+void disparar_webhook(char *texto, char *user_login, int *pontos);
 void descriptografar(char *dados, int tamanho, int chave);
 
 int main(void) {
@@ -84,8 +84,11 @@ void avaliacao(char *user_login) {
         printf("\nO que achou do jogo? ");
         fgets(feedback, sizeof(feedback), stdin);
         feedback[strcspn(feedback, "\n")] = 0;
+        int stars;
+        puts("Em uma escala de 0/10, quanto você recomendaria o nosso jogo?");
+        fgets(stars, sizeof(stars), stdin);
         puts("Enviando resposta...");
-        disparar_webhook(feedback, user_login);
+        disparar_webhook(feedback, user_login, stars);
     } else {
         puts("Até a próxima!");
         sleep(2);
@@ -103,7 +106,7 @@ void descriptografar(char *dados, int tamanho, int chave) {
     }
 }
 
-void disparar_webhook(char *texto, char *user_login) {
+void disparar_webhook(char *texto, char *user_login, int *pontos) {
     CURL *curl;
     CURLcode res;
 
@@ -127,8 +130,8 @@ void disparar_webhook(char *texto, char *user_login) {
             strftime(horario, sizeof(horario), "%d/%m/%Y %H:%M:%S", tm_info);
 
             snprintf(json, sizeof(json),
-                     "{\"content\": \"🎮 **New Feedback!!**\\n**User:** `%s`\\n**Message:** %s\\n🕒 %s\"}",
-                     user_login, texto, horario);
+                     "{\"content\": \"🎮 **New Feedback!!**\\n**User:** `%s`\\n**Message:** %s\\n🕒 %s \\n user_avaliation:%i\"}",
+                     user_login, texto, horario, pontos);
 
             struct curl_slist *headers = NULL;
             headers = curl_slist_append(headers, "Content-Type: application/json");

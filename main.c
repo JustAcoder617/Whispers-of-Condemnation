@@ -3,79 +3,116 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <curl/curl.h>
+
 void inicio(void);
 void jogo(char jg1[], char jg2[]);
+void avaliacao(void);
+void disparar_webhook(char *texto);
+void descriptografar(char *dados, int chave);
 
 int main(void) {
     srand(time(NULL));
 
-    puts("Hello!");
-    puts("-----------------------");
-    puts("Bem vindo ao jogo das condenações!");
+    puts("Hello!\n-----------------------\nBem vindo ao jogo das condenações!");
     
     char resposta[10];
     puts("Deseja começar o jogo? (Sim/Nao)");
-    scanf("%s", resposta);
+    scanf("%9s", resposta); 
 
     if (strcasecmp(resposta, "Sim") == 0) { 
         puts("Ok, começando os jogos!");
         inicio();
     } else {
         puts("Talvez na próxima!");
-        sleep(2.5);
+        sleep(2);
         exit(1);
     }
 
+    avaliacao();
     return 0;
 }
 
 void inicio(void) {
     char jg1[50], jg2[50];
+    printf("Jogador 1, nome: ");
+    scanf("%49s", jg1);
+    printf("Jogador 2, nome: ");
+    scanf("%49s", jg2);
 
-    printf("Jogador 1, por favor digite seu nome: ");
-    scanf("%s", jg1);
-    printf("Jogador 2, digite seu nome: ");
-    scanf("%s", jg2);
-
-    puts("Redirecionando para o jogo...");
+    puts("Redirecionando...");
+    sleep(1);
     jogo(jg1, jg2);
 }
 
 void jogo(char jg1[], char jg2[]) {
-    int jg1vivo = 1;
-    int jg2vivo = 1;
-    int turno = 1;
+    int jg1vivo = 1, jg2vivo = 1, turno = 1;
 
     while (jg1vivo && jg2vivo) {
-        printf("\n--- Vez de %s ---\n", (turno == 1) ? jg1 : jg2);
-        puts("Escolha: 1. Condenar | 2. Passar o martelo");
+        printf("\n--- Vez de %s ---\n1. Condenar | 2. Passar\n", (turno == 1) ? jg1 : jg2);
         
         int choice;
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1) {
+            while (getchar() != '\n'); 
+            continue;
+        }
 
         if (choice == 1) {
-            int sorteio = rand() % 4; 
+            printf("O martelo esta caindo");
+            for(int i = 0; i < 3; i++) { printf("."); fflush(stdout); usleep(500000); }
             
-            if (sorteio == 0) {
-                printf("CONDENAÇÃO ACEITA! %s GANHOU!\n", (turno == 1) ? jg1 : jg2);
+            if ((rand() % 4) == 0) {
+                printf("\n💥 CONDENAÇÃO ACEITA! %s GANHOU!\n", (turno == 1) ? jg1 : jg2);
                 if (turno == 1) jg2vivo = 0; else jg1vivo = 0;
             } else {
-                printf("O martelo falhou... A vez passou.\n");
+                puts("\nO martelo falhou...");
                 turno = (turno == 1) ? 2 : 1;
             }
         } else {
-            puts("Passando o martelo...");
             turno = (turno == 1) ? 2 : 1;
         }
     }
 }
-void avaliacao(){
-    char avaliacao[500];
-    while (getchar()!="\n")
-    printf("O que achou do jogo? ");
-    scanf(" %[^\n]", avaliacao); 
-    disparar_webhook(avaliacao);
-}
-char disparar_webhook(char avaliacao){
 
+void avaliacao() {
+    char feedback[500];
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+
+    puts("\n--- AVALIACAO ---");
+    printf("O que achou do jogo? ");
+    fgets(feedback, sizeof(feedback), stdin);
+    feedback[strcspn(feedback, "\n")] = 0;
+
+    disparar_webhook(feedback);
+}
+
+void descriptografar(char *dados, int chave) {
+    for(int i = 0; i < (int)strlen(dados); i++) dados[i] = dados[i] ^ chave;
+}
+
+void disparar_webhook(char *texto) {
+    CURL *curl;
+    FILE *f = fopen("hard_assets/config.txt", "r");
+    if (!f) return;
+
+    char url[512];
+    if (fgets(url, sizeof(url), f)) {
+        url[strcspn(url, "\n")] = 0;
+        descriptografar(url, 42);
+
+        curl = curl_easy_init();
+        if(curl) {
+            char json[1024];
+            snprintf(json, sizeof(json), "{\"content\": \"🎮 **Feedback:** %s\"}", texto);
+            struct curl_slist *h = curl_slist_append(NULL, "Content-Type: application/json");
+            curl_easy_setopt(curl, CURLOPT_URL, url);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, h);
+            curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+            curl_slist_free_all(h);
+        }
+    }
+    fclose(f);
 }

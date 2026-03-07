@@ -79,7 +79,7 @@ void avaliacao() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 
-    puts("\n--- AVALIACAO ---");
+    puts("\n--- AVALIAÇÃO ---");
     printf("O que achou do jogo? ");
     fgets(feedback, sizeof(feedback), stdin);
     feedback[strcspn(feedback, "\n")] = 0;

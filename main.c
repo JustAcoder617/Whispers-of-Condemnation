@@ -69,3 +69,13 @@ void jogo(char jg1[], char jg2[]) {
         }
     }
 }
+void avaliacao(){
+    char avaliacao[500];
+    while (getchar()!="\n")
+    printf("O que achou do jogo? ");
+    scanf(" %[^\n]", avaliacao); 
+    disparar_webhook(avaliacao);
+}
+char disparar_webhook(char avaliacao){
+
+}

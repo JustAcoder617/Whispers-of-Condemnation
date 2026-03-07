@@ -101,10 +101,20 @@ void disparar_webhook(char *texto) {
         url[strcspn(url, "\n")] = 0;
         descriptografar(url, 42);
 
+        // Obter data e hora atual
+        time_t t = time(NULL);
+        struct tm *tm_info = localtime(&t);
+        char horario[64];
+        strftime(horario, sizeof(horario), "%d/%m/%Y %H:%M:%S", tm_info);
+
         curl = curl_easy_init();
         if(curl) {
             char json[1024];
-            snprintf(json, sizeof(json), "{\"content\": \"🎮 **Feedback:** %s\"}", texto);
+            // Incluindo data/hora no conteúdo
+            snprintf(json, sizeof(json),
+                     "{\"content\": \"🎮 **Feedback:** %s\\n🕒 **Horário:** %s\"}",
+                     texto, horario);
+
             struct curl_slist *h = curl_slist_append(NULL, "Content-Type: application/json");
             curl_easy_setopt(curl, CURLOPT_URL, url);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);

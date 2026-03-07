@@ -5,15 +5,15 @@
 #include <unistd.h>
 #include <curl/curl.h>
 
+// Protótipos
 void inicio(void);
 void jogo(char jg1[], char jg2[]);
 void avaliacao(void);
 void disparar_webhook(char *texto);
-void descriptografar(char *dados, int chave);
+void descriptografar(char *dados, int tamanho, int chave);
 
 int main(void) {
     srand(time(NULL));
-
     puts("Hello!\n-----------------------\nBem vindo ao jogo das condenações!");
     
     char resposta[10];
@@ -46,20 +46,16 @@ void inicio(void) {
 
 void jogo(char jg1[], char jg2[]) {
     int jg1vivo = 1, jg2vivo = 1, turno = 1;
-
     while (jg1vivo && jg2vivo) {
         printf("\n--- Vez de %s ---\n1. Condenar | 2. Passar\n", (turno == 1) ? jg1 : jg2);
-        
         int choice;
         if (scanf("%d", &choice) != 1) {
             while (getchar() != '\n'); 
             continue;
         }
-
         if (choice == 1) {
             printf("O martelo esta caindo");
             for(int i = 0; i < 3; i++) { printf("."); fflush(stdout); usleep(500000); }
-            
             if ((rand() % 4) == 0) {
                 printf("\n💥 CONDENAÇÃO ACEITA! %s GANHOU!\n", (turno == 1) ? jg1 : jg2);
                 if (turno == 1) jg2vivo = 0; else jg1vivo = 0;
@@ -74,64 +70,80 @@ void jogo(char jg1[], char jg2[]) {
 }
 
 void avaliacao() {
-    puts("\n Gostaria de deixar o seu feedback para o nosso jogo? (o seu feedback será enviado ao nosso canal de feedbacks no discord, onde iremos avaliar e tomar as medidas acarretadas.)?");
-    char pergunta[4];
-    scanf("%4s", &pergunta);
-    if (strcmp(pergunta, "sim")==0){
-        puts("Ok, começando avaliação...");
-        sleep(2);
-    }
-    else{
-        puts("Ok, muito obrigado por testar nosso game!! se quiser entrar no nosso servidor do discord: ");
-    }
-    char feedback[500];
+    char pergunta[10];
+    printf("\nGostaria de deixar o seu feedback? (sim/nao): ");
+    scanf("%9s", pergunta); 
     int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+    while ((c = getchar()) != '\n' && c != EOF); // Limpa buffer
 
-    puts("\n--- AVALIAÇÃO ---");
-    printf("O que achou do jogo? ");
-    fgets(feedback, sizeof(feedback), stdin);
-    feedback[strcspn(feedback, "\n")] = 0;
-
-    disparar_webhook(feedback);
+    if (strcasecmp(pergunta, "sim") == 0) {
+        char feedback[500];
+        printf("\n--- AVALIAÇÃO ---\nO que achou do jogo? ");
+        fgets(feedback, sizeof(feedback), stdin);
+        feedback[strcspn(feedback, "\n")] = 0;
+        disparar_webhook(feedback);
+    } else {
+        puts("Ok, muito obrigado por testar!");
+    }
 }
 
-void descriptografar(char *dados, int chave) {
-    for(int i = 0; i < (int)strlen(dados); i++) dados[i] = dados[i] ^ chave;
+void descriptografar(char *dados, int tamanho, int chave) {
+    for(int i = 0; i < tamanho; i++) {
+        // Ignora caracteres de nova linha que o sistema operacional possa ter inserido
+        if(dados[i] == '\n' || dados[i] == '\r') {
+            dados[i] = '\0';
+            break;
+        }
+        dados[i] = dados[i] ^ chave;
+    }
 }
 
 void disparar_webhook(char *texto) {
     CURL *curl;
-    FILE *f = fopen("hard_assets/config.txt", "r");
-    if (!f) return;
+    CURLcode res;
 
-    char url[512];
-    if (fgets(url, sizeof(url), f)) {
-        url[strcspn(url, "\n")] = 0;
-        descriptografar(url, 42);
+    FILE *f = fopen("hard_assets/config.txt", "rb");
+    if (!f) {
+        fprintf(stderr, "Erro: Arquivo 'hard_assets/config.txt' nao encontrado.\n");
+        return;
+    }
 
-        // Obter data e hora atual
-        time_t t = time(NULL);
-        struct tm *tm_info = localtime(&t);
-        char horario[64];
-        strftime(horario, sizeof(horario), "%d/%m/%Y %H:%M:%S", tm_info);
+    char url_encriptada[512];
+    size_t n = fread(url_encriptada, 1, sizeof(url_encriptada) - 1, f);
+    fclose(f);
+
+    if (n > 0) {
+        url_encriptada[n] = '\0';
+        descriptografar(url_encriptada, (int)n, 42);
 
         curl = curl_easy_init();
         if(curl) {
             char json[1024];
-            // Incluindo data/hora no conteúdo
+            time_t t = time(NULL);
+            struct tm *tm_info = localtime(&t);
+            char horario[64];
+            strftime(horario, sizeof(horario), "%d/%m/%Y %H:%M:%S", tm_info);
+
             snprintf(json, sizeof(json),
-                     "{\"content\": \"🎮 **Feedback:** %s\\n🕒 **Horário:** %s\"}",
+                     "{\"content\": \"🎮 **Novo Feedback!**\\n**Mensagem:** %s\\n🕒 %s\"}",
                      texto, horario);
 
-            struct curl_slist *h = curl_slist_append(NULL, "Content-Type: application/json");
-            curl_easy_setopt(curl, CURLOPT_URL, url);
+            struct curl_slist *headers = NULL;
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+
+            curl_easy_setopt(curl, CURLOPT_URL, url_encriptada);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, h);
-            curl_easy_perform(curl);
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+            res = curl_easy_perform(curl);
+            if(res != CURLE_OK) {
+                fprintf(stderr, "Falha no CURL: %s\n", curl_easy_strerror(res));
+            } else {
+                puts("Feedback enviado com sucesso! Obrigado.");
+            }
+
             curl_easy_cleanup(curl);
-            curl_slist_free_all(h);
+            curl_slist_free_all(headers);
         }
     }
-    fclose(f);
-}//
+}

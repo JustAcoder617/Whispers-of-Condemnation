@@ -5,34 +5,37 @@
 #include <unistd.h>
 #include <curl/curl.h>
 
-// Protótipos
-void inicio(void);
-void jogo(char jg1[], char jg2[]);
-void avaliacao(void);
-void disparar_webhook(char *texto);
+void inicio(char *user_login);
+void jogo(char jg1[], char jg2[], char *user_login);
+void avaliacao(char *user_login);
+void disparar_webhook(char *texto, char *user_login);
 void descriptografar(char *dados, int tamanho, int chave);
 
 int main(void) {
     srand(time(NULL));
-    puts("-----------------------\nBem vindo ao jogo das condenações!");
+    char user_login[50];
     
+    puts("-----------------------\nBem vindo ao jogo das condenações!");
+    printf("Digite seu username de desenvolvedor/jogador: ");
+    scanf("%49s", user_login);
+
     char resposta[10];
     puts("Deseja começar o jogo? (Sim/Nao)");
     scanf("%9s", resposta); 
 
     if (strcasecmp(resposta, "Sim") == 0) { 
         puts("Ok, começando os jogos!");
-        inicio();
+        inicio(user_login);
     } else {
         puts("Talvez na próxima!");
         sleep(2);
         exit(1);
     }
-    avaliacao();
+    avaliacao(user_login);
     return 0;
 }
 
-void inicio(void) {
+void inicio(char *user_login) {
     char jg1[50], jg2[50];
     printf("Jogador 1, nome: ");
     scanf("%49s", jg1);
@@ -41,10 +44,10 @@ void inicio(void) {
 
     puts("Redirecionando...");
     sleep(1);
-    jogo(jg1, jg2);
+    jogo(jg1, jg2, user_login);
 }
 
-void jogo(char jg1[], char jg2[]) {
+void jogo(char jg1[], char jg2[], char *user_login) {
     int jg1vivo = 1, jg2vivo = 1, turno = 1;
     while (jg1vivo && jg2vivo) {
         printf("\n--- Vez de %s ---\n1. Condenar | 2. Passar\n", (turno == 1) ? jg1 : jg2);
@@ -69,34 +72,28 @@ void jogo(char jg1[], char jg2[]) {
     }
 }
 
-void avaliacao() {
+void avaliacao(char *user_login) {
     char pergunta[10];
-    printf("\nGostaria de deixar o seu feedback? Ele será enviado para o canal de registro de avaliações, no nosso servidor do Discord®. (sim/nao): ");
+    printf("\nGostaria de deixar o seu feedback, %s? A sua avaliação será enviada para o nosso servidor do discord, onde será armazenada em uma cannal de texto e lida pelos devs, fazendo assim a melhoria do nosso jogo (o seu nome aqui registrado irá junto a avaliação).(sim/nao): ", user_login);
     scanf("%9s", pergunta); 
     int c;
-    while ((c = getchar()) != '\n' && c != EOF); // Limpa buffer
+    while ((c = getchar()) != '\n' && c != EOF);
 
     if (strcasecmp(pergunta, "sim") == 0) {
         char feedback[500];
-        printf("\n--- AVALIAÇÃO ---\nO que achou do jogo? ");
+        printf("\nO que achou do jogo? ");
         fgets(feedback, sizeof(feedback), stdin);
         feedback[strcspn(feedback, "\n")] = 0;
-        disparar_webhook(feedback);
+        disparar_webhook(feedback, user_login);
     } else {
-        puts("Ok, muito obrigado por testar!");
-        sleep(1);
-        puts("Se quiser Entrar no nosso servidor do Discord®, acesse o link: https://discord.gg/BK6yxFrCTb");
-        sleep(3);
-        puts("Desde já, agradecemos por jogar o nosso jogo!");
         puts("Até a próxima!");
-        sleep(4);
-        exit(1);
+        sleep(2);
+        exit(0);
     }
 }
 
 void descriptografar(char *dados, int tamanho, int chave) {
     for(int i = 0; i < tamanho; i++) {
-        // Ignora caracteres de nova linha que o sistema operacional possa ter inserido
         if(dados[i] == '\n' || dados[i] == '\r') {
             dados[i] = '\0';
             break;
@@ -105,15 +102,12 @@ void descriptografar(char *dados, int tamanho, int chave) {
     }
 }
 
-void disparar_webhook(char *texto) {
+void disparar_webhook(char *texto, char *user_login) {
     CURL *curl;
     CURLcode res;
 
     FILE *f = fopen("hard_assets/config.txt", "rb");
-    if (!f) {
-        fprintf(stderr, "Erro: Arquivo 'hard_assets/config.txt' nao encontrado.\n");
-        return;
-    }
+    if (!f) return;
 
     char url_encriptada[512];
     size_t n = fread(url_encriptada, 1, sizeof(url_encriptada) - 1, f);
@@ -125,15 +119,15 @@ void disparar_webhook(char *texto) {
 
         curl = curl_easy_init();
         if(curl) {
-            char json[1024];
+            char json[2048];
             time_t t = time(NULL);
             struct tm *tm_info = localtime(&t);
             char horario[64];
             strftime(horario, sizeof(horario), "%d/%m/%Y %H:%M:%S", tm_info);
 
             snprintf(json, sizeof(json),
-                     "{\"content\": \"🎮 **New Feedback!!**\\n**Mesage:** %s\\n🕒 %s\"}",
-                     texto, horario);
+                     "{\"content\": \"🎮 **New Feedback!!**\\n**User:** `%s`\\n**Message:** %s\\n🕒 %s\"}",
+                     user_login, texto, horario);
 
             struct curl_slist *headers = NULL;
             headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -143,12 +137,6 @@ void disparar_webhook(char *texto) {
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
             res = curl_easy_perform(curl);
-            if(res != CURLE_OK) {
-                fprintf(stderr, "Falha no CURL: %s\n", curl_easy_strerror(res));
-            } else {
-                puts("Feedback enviado com sucesso! Obrigado.");
-            }
-
             curl_easy_cleanup(curl);
             curl_slist_free_all(headers);
         }

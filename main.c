@@ -86,9 +86,9 @@ void avaliacao(char *user_login) {
         feedback[strcspn(feedback, "\n")] = 0;
         int stars;
         puts("Em uma escala de 0/10, quanto você recomendaria o nosso jogo?");
-        fgets(stars, sizeof(stars), stdin);
+        scanf("%d", &stars);
         puts("Enviando resposta...");
-        disparar_webhook(feedback, user_login, stars);
+        disparar_webhook(feedback, user_login, &stars);
     } else {
         puts("Até a próxima!");
         sleep(2);

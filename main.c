@@ -83,10 +83,10 @@ void jogo(char jg1[], char jg2[], char *user_login) {
             // Lógica de chance: 25% de chance de sucesso (1 em 4)
             int sorteio = rand() % 4; 
 
-            if (sorteio == 0) { // SIM (Sucesso na condenação)
+            if (sorteio == 0) {
                 printf("\n💥 %s CONDENOU %s COM SUCESSO!\n", atual, alvo);
                 if (turno == 1) jg2vivo = 0; else jg1vivo = 0;
-            } else { // NÃO (Falha)
+            } else {
                 int msg_idx = rand() % num_frases;
                 printf("\n❌ %s\n", frases_falha[msg_idx]);
                 turno = (turno == 1) ? 2 : 1;

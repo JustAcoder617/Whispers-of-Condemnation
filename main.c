@@ -8,7 +8,7 @@
 void inicio(char *user_login);
 void jogo(char jg1[], char jg2[], char *user_login);
 void avaliacao(char *user_login);
-void disparar_webhook(char *texto, char *user_login, int *pontos);
+void disparar_webhook(char *texto, char *user_login, int pontos);
 void descriptografar(char *dados, int tamanho, int chave);
 
 int main(void) {
@@ -106,7 +106,7 @@ void descriptografar(char *dados, int tamanho, int chave) {
     }
 }
 
-void disparar_webhook(char *texto, char *user_login, int *pontos) {
+void disparar_webhook(char *texto, char *user_login, int pontos) {
     CURL *curl;
     CURLcode res;
 

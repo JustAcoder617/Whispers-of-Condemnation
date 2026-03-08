@@ -36,8 +36,11 @@ static inline int Expressao(int n1, int n2, char operaçao[]){
         return resultado;
     }
     if(strcmp(operaçao, "frdm")){//fração para decimal
-        int resultado=n1/n2;
+        float resultado=n1/n2;
         return resultado;
+    }
+    else{
+        perror("Operação inválida.")
     }
 }
 #endif

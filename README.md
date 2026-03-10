@@ -59,7 +59,7 @@ Nada de ficar no escuro! O projeto integra um sistema de comunicação robusto p
 
 ### 🔐 cweb.h – O Sistema Nervoso do Motor
 
-> "O cweb.h foi desenvolvido para ser o **sistema nervoso** do motor. Ele não apenas envia dados; ele gerencia a segurança através de **descriptografia em tempo de execução** utilizando a robustez da `libcurl`."
+> "O cweb.h foi desenvolvido para ser o **sistema nervoso** do motor. Ele não apenas envia dados; ele gerencia a segurança através de **descriptografia em tempo de execução** utilizando a robustez da `libcurl`, **incluindo verificação para saber se há internet ou não.**"
 
 #### Funcionalidade Principal
 

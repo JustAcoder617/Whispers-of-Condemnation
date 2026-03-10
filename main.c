@@ -148,7 +148,14 @@ void avaliacao(char *user_login) {
         puts("De 0 a 10, qual sua nota?");
         scanf("%d", &stars);
 
-        disparar_webhook(feedback, user_login, stars);
+        int check_webhook = disparar_webhook(feedback, user_login, stars);
+        if (check_webhook==1)
+        {
+            puts("Não foi possível enviar seu feedback, mas agradecemos por jogar!");
+            exit(1);
+        }
+        puts("\nObrigado pelo feedback! Ele foi enviado com sucesso!");
+        
     } else {
         puts("Até a próxima!");
     }

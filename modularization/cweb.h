@@ -19,7 +19,7 @@ static inline char* descriptografar(char *dados, int tamanho, int chave) { // aq
 
 // Note os 3 argumentos aqui: feedback, login e pontos
 //o formato aqui está sendo usado com texto, user_login e pontos, mas você pode ajustar conforme necessário no seu projeto!
-static inline void disparar_webhook(char *texto, char *user_login, int pontos) {
+static inline int disparar_webhook(char *texto, char *user_login, int pontos) {
     // Tenta abrir o arquivo de config
     //aqui, se você tiver um caminho diferente para o arquivo de configuração, ajuste o caminho abaixo, se não tiver nada para usar o sistema de crptografia ou quiser usar esta função apenas para urls normais sem criptografia, ajuste a função removendo a parte de descriptografia e lendo o arquivo, e use a URL diretamente na argumentação, onde está a variável url, ou seja, substitua a parte de leitura do arquivo e descriptografia por algo como: char *url = "sua_url_aqui", ou ajuste conforme necessário para o seu projeto específico.
     CURL *curl;
@@ -29,6 +29,14 @@ static inline void disparar_webhook(char *texto, char *user_login, int pontos) {
         puts("Erro: Arquivo de config não encontrado.");
         return;
     }
+
+    if (!CURLE_OK)
+    {
+        puts("Erro: Falha ao se conectar com a internet ou fazer o processo de envio de algum dado, verifique sua conexão e tente novamente.");
+        fclose(f);
+        return 1;
+    }
+    
 
     char url_encriptada[512];
     size_t n = fread(url_encriptada, 1, sizeof(url_encriptada) - 1, f);

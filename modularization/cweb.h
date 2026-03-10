@@ -23,20 +23,13 @@ static inline int disparar_webhook(char *texto, char *user_login, int pontos) {
     // Tenta abrir o arquivo de config
     //aqui, se você tiver um caminho diferente para o arquivo de configuração, ajuste o caminho abaixo, se não tiver nada para usar o sistema de crptografia ou quiser usar esta função apenas para urls normais sem criptografia, ajuste a função removendo a parte de descriptografia e lendo o arquivo, e use a URL diretamente na argumentação, onde está a variável url, ou seja, substitua a parte de leitura do arquivo e descriptografia por algo como: char *url = "sua_url_aqui", ou ajuste conforme necessário para o seu projeto específico.
     CURL *curl;
+    CURLcode res; // Variável para armazenar o status do envio
     
     FILE *f = fopen("hard_assets/config.txt", "rb");
     if (!f) {
         puts("Erro: Arquivo de config não encontrado.");
-        return;
+        return 0;
     }
-
-    if (!CURLE_OK)
-    {
-        puts("Erro: Falha ao se conectar com a internet ou fazer o processo de envio de algum dado, verifique sua conexão e tente novamente.");
-        fclose(f);
-        return 1;
-    }
-    
 
     char url_encriptada[512];
     size_t n = fread(url_encriptada, 1, sizeof(url_encriptada) - 1, f);
@@ -46,7 +39,8 @@ static inline int disparar_webhook(char *texto, char *user_login, int pontos) {
         url_encriptada[n] = '\0';
         // Descriptografa a URL
         char *url = descriptografar(url_encriptada, (int)n, 42);
-     //desta parte em diante, o curl vai entrar em ação para enviar/disparar a URL desejada.
+        
+        //desta parte em diante, o curl vai entrar em ação para enviar/disparar a URL desejada.
         curl = curl_easy_init();
         if(curl) {
             char json[2048];
@@ -67,13 +61,27 @@ static inline int disparar_webhook(char *texto, char *user_login, int pontos) {
             curl_easy_setopt(curl, CURLOPT_URL, url);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+            
+            // Define um tempo limite de 5 segundos para não travar o jogo
+            curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);
 
-            curl_easy_perform(curl);
+            // Executa o envio e armazena o resultado em 'res'
+            res = curl_easy_perform(curl);
+
+            // Verifica se o envio falhou
+            if (res != CURLE_OK) {
+                fprintf(stderr, "\nErro: Falha ao se conectar com a internet ou fazer o processo de envio: %s\n", curl_easy_strerror(res));
+                curl_easy_cleanup(curl);
+                curl_slist_free_all(headers);
+                return 0;
+            }
 
             curl_easy_cleanup(curl);
             curl_slist_free_all(headers);
+            return 1; // Sucesso
         }
     }
+    return 0;
 }
 
 #endif

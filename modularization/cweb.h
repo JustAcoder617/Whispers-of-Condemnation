@@ -70,7 +70,7 @@ static inline int disparar_webhook(char *texto, char *user_login, int pontos) {
 
             // Verifica se o envio falhou
             if (res != CURLE_OK) {
-                fprintf(stderr, "\nErro: Falha ao se conectar com a internet ou fazer o processo de envio: %s\n", curl_easy_strerror(res));
+                fprintf(stderr, "\nErro na hora de enviar a avaliação: Falha ao se conectar com a internet ou fazer o processo de envio: %s\n", curl_easy_strerror(res));
                 curl_easy_cleanup(curl);
                 curl_slist_free_all(headers);
                 return 0;

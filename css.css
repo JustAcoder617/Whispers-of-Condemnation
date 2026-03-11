@@ -1,0 +1,111 @@
+/* Configuração Global */
+body {
+    background-color: #1a1a1a; /* Fundo escuro para destacar o ouro e o vermelho */
+    color: #F5F5DC;           /* Texto cor de pergaminho */
+    margin: 0;
+    padding: 20px;
+}
+
+#welcome {
+    text-align: center;
+    font-family: "Bungee", cursive;
+
+    h1 {
+        font-size: 3rem;
+        background-image: linear-gradient(to right, #8B0000, #ffac11, #8B0000); /* Mudei o final pra vermelho pro ouro brilhar no meio */
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent; 
+        color: transparent;
+        margin-bottom: 10px;
+    }
+
+    hr {
+        border: 0;
+        height: 2px;
+        background: linear-gradient(to right, transparent, #C5A059, transparent); /* Linha elegante */
+        width: 80%;
+        margin: 20px auto;
+    }
+    
+    h2 {
+        color: #C5A059;
+        font-size: 1.5rem;
+    }
+}
+
+#start {
+    margin-top: 50px;
+
+    h1 {
+        font-family: "Luckiest Guy";
+        text-align: center;
+        font-size: 3.5rem;
+        background-image: linear-gradient(to left, #ff0000, #ffa602, #ff0000);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent; 
+        color: transparent;
+    }
+
+    p {
+        text-align: center;
+        font-family: "Fredoka One";
+        font-size: 1.2rem;
+        color: #C5A059;
+    }
+
+    ol {
+        list-style: none; /* Remove as bolinhas/números que ficam feios no centro */
+        padding: 0;
+    }
+
+    li {
+        text-align: center;
+        font-family: "Fredoka One";
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto; 
+        padding: 10px;
+        border-bottom: 1px dashed #333; 
+    }
+}
+#Buttons {
+    display: flex;          /* Transforma em um container flexível */
+    justify-content: center; /* Centraliza tudo na horizontal automaticamente */
+    gap: 20px;              /* Cria um espaço de 20px entre os botões */
+    margin-top: 30px;       /* Dá uma distância do texto acima */
+
+    button {
+        padding: 15px 30px;
+        font-family: "Bungee", cursive;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: 0.3s; /* Para o efeito de hover ficar suave */
+    }
+
+    #repo {
+        background-color: #8B0000; /* Vermelho Condenação */
+        color: white;
+        border: 2px solid #ffac11;
+        
+        &:hover {
+            background-color: #ffac11;
+            color: #8B0000;
+            transform: scale(1.1); /* Dá um zoom de leve ao passar o mouse */
+        }
+    }
+
+    #person {
+        background-color: transparent;
+        color: #C5A059;
+        border: 2px solid #C5A059;
+
+        &:hover {
+            background-color: #C5A059;
+            color: #1a1a1a;
+            transform: scale(1.1);
+        }
+    }
+}

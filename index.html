@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whispers-Of-Condemnation</title>
+    <title>Whispers of Condemnation</title>
     <link rel="stylesheet" href="css.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,41 +11,47 @@
 </head>
 <body>
     <div id="welcome">
-        <h1>Welcome to the Whispers-of-Condemnation main page!</h1>
-        <h2>Meet our project:</h2>
+        <h1>Welcome to the Whispers of Condemnation main page!</h1>
+        <h2>Discover our project:</h2>
         <hr>
     </div>
+
     <div id="start">
         <br>
-        <h1>Whispers-Of-Comndenation</h1>
-        <p>Our project is:</p>
-        <ol>
+        <h1>Whispers of Condemnation</h1>
+        <p>Project Overview:</p>
+        <ul>
             <li>
-                An judicial game, working actually (11/03/2026) At CLI (GUI will be added soon)
+                <strong>Judicial Simulator:</strong> Currently running in <strong>CLI</strong> (as of 11/03/2026). 
+                <em>GUI version is under development.</em>
             </li>
             <br>
             <li>
-                An game connect with Discord webhooks, maked to connect with avaliation system.
+                <strong>Discord Integration:</strong> Connected via Webhooks for an integrated evaluation system.
             </li>
             <li>
-                Modularization Open-source, with MIT license.
+                <strong>Open Source:</strong> Fully modularized under the <strong>MIT License</strong>.
             </li>
             <li>
-                Modularization with:
-                <ol>
+                <strong>Future Core Modules (C++):</strong>
+                <ul>
                     <li>
-                        Simplemath.h: geral Math and random functions;
-                        Cweb.h: Critography function (XOR) and webhok activation (all headers are currently in portugues, EN version will be added soon).
+                        <code>Simplemath.h</code>: General math and Pseudo-Random Number Generation (PRNG).
                     </li>
-                </ol>
+                    <li>
+                        <code>Cweb.h</code>: XOR Cryptography and Webhook activation layer.
+                    </li>
+                    <p><em>*Note: Headers are in Portuguese; EN-US documentation coming soon.</em></p>
+                </ul>
             </li>
-        </ol>
+        </ul>
     </div>
     
     <div id="Buttons">
-        <button id="person">Meet JustAnCoder617!</button>
-        <button id="repo">Meet Repo!</button>
+        <button id="person" onclick="window.location.href='https://github.com/justacoder617'">Meet JustAnCoder617!</button>
+        <button id="repo" onclick="window.location.href='https://github.com/justacoder617/Whispers-of-Condemnation'">Meet the Repo!</button>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

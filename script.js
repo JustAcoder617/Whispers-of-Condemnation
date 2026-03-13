@@ -1,16 +1,34 @@
 const repoBtn = document.getElementById("repo");
 const personBtn = document.getElementById("person");
+const welcomeTitle = document.querySelector("#welcome h1");
 
-// Função genérica para abrir links em nova aba
-const openLink = (url) => {
-    window.open(url, '_blank');
+const textoParaDigitar = "Welcome to the Whispers of Condemnation main page!";
+welcomeTitle.innerText = ""; 
+
+let charIndex = 0;
+function typeEffect() {
+    if (charIndex < textoParaDigitar.length) {
+        let char = textoParaDigitar.charAt(charIndex);
+        welcomeTitle.innerHTML += (char === " ") ? "&nbsp;" : char;
+        charIndex++;
+        setTimeout(typeEffect, 60);
+    }
+}
+
+const handleButtonClick = (url, btn) => {
+    btn.classList.add("btn-active"); 
+    setTimeout(() => {
+        btn.classList.remove("btn-active");
+        window.open(url, '_blank');
+    }, 150); 
 };
 
-// Eventos
 repoBtn.addEventListener("click", () => {
-    openLink('https://github.com/JustAcoder617/Whispers-of-Condemnation');
+    handleButtonClick('https://github.com/JustAcoder617/Whispers-of-Condemnation', repoBtn);
 });
 
 personBtn.addEventListener("click", () => {
-    openLink('https://github.com/JustAcoder617');
+    handleButtonClick('https://github.com/JustAcoder617', personBtn);
 });
+
+window.onload = typeEffect;

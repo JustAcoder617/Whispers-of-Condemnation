@@ -1,111 +1,142 @@
-/* Configuração Global */
 body {
-    background-color: #1a1a1a; /* Fundo escuro para destacar o ouro e o vermelho */
-    color: #F5F5DC;           /* Texto cor de pergaminho */
+    background-color: #1a1a1a;
+    color: #F5F5DC;
     margin: 0;
     padding: 20px;
+    overflow-x: hidden;
 }
 
 #welcome {
     text-align: center;
     font-family: "Bungee", cursive;
+    width: 100%;
+    min-height: 180px;
+}
 
-    h1 {
-        font-size: 3rem;
-        background-image: linear-gradient(to right, #8B0000, #ffac11, #8B0000); /* Mudei o final pra vermelho pro ouro brilhar no meio */
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent; 
-        color: transparent;
-        margin-bottom: 10px;
-    }
+#welcome h1 {
+    font-size: 3rem;
+    background-image: linear-gradient(to right, #8B0000, #ffac11, #8B0000);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    color: transparent;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 95%;
+    line-height: 1.2;
+    display: block;
+    word-spacing: 5px;
+    overflow-wrap: break-word;
+    word-break: normal;
+    white-space: normal;
+}
 
-    hr {
-        border: 0;
-        height: 2px;
-        background: linear-gradient(to right, transparent, #C5A059, transparent); /* Linha elegante */
-        width: 80%;
-        margin: 20px auto;
-    }
-    
-    h2 {
-        color: #C5A059;
-        font-size: 1.5rem;
-    }
+#welcome hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #C5A059, transparent);
+    width: 80%;
+    margin: 20px auto;
+}
+
+#welcome h2 {
+    color: #C5A059;
+    font-size: 1.5rem;
 }
 
 #start {
     margin-top: 50px;
-
-    h1 {
-        font-family: "Luckiest Guy";
-        text-align: center;
-        font-size: 3.5rem;
-        background-image: linear-gradient(to left, #ff0000, #ffa602, #ff0000);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent; 
-        color: transparent;
-    }
-
-    p {
-        text-align: center;
-        font-family: "Fredoka One";
-        font-size: 1.2rem;
-        color: #C5A059;
-    }
-
-    ol {
-        list-style: none; /* Remove as bolinhas/números que ficam feios no centro */
-        padding: 0;
-    }
-
-    li {
-        text-align: center;
-        font-family: "Fredoka One";
-        font-size: 1.1rem;
-        max-width: 600px;
-        margin: 0 auto; 
-        padding: 10px;
-        border-bottom: 1px dashed #333; 
-    }
 }
+
+#start h1 {
+    font-family: "Luckiest Guy";
+    text-align: center;
+    font-size: 3.5rem;
+    background-image: linear-gradient(to left, #ff0000, #ffa602, #ff0000);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    color: transparent;
+    word-break: keep-all;
+}
+
+#start p {
+    text-align: center;
+    font-family: "Fredoka One";
+    font-size: 1.2rem;
+    color: #C5A059;
+}
+
+#start ol, #start ul {
+    list-style: none;
+    padding: 0;
+}
+
+#start li {
+    text-align: center;
+    font-family: "Fredoka One";
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto; 
+    padding: 10px;
+    border-bottom: 1px dashed #333; 
+}
+
 #Buttons {
-    display: flex;          /* Transforma em um container flexível */
-    justify-content: center; /* Centraliza tudo na horizontal automaticamente */
-    gap: 20px;              /* Cria um espaço de 20px entre os botões */
-    margin-top: 30px;       /* Dá uma distância do texto acima */
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
 
-    button {
-        padding: 15px 30px;
-        font-family: "Bungee", cursive;
-        font-size: 1rem;
-        cursor: pointer;
-        border-radius: 8px;
-        transition: 0.3s; /* Para o efeito de hover ficar suave */
+#Buttons button {
+    padding: 15px 30px;
+    font-family: "Bungee", cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.1s, background-color 0.3s;
+}
+
+.btn-active {
+    transform: scale(0.9) !important;
+    filter: brightness(0.7);
+}
+
+#repo {
+    background-color: #8B0000;
+    color: white;
+    border: 2px solid #ffac11;
+    box-shadow: 0px 4px 10px #8B0000;
+}
+
+#repo:hover {
+    background-color: #ffac11;
+    color: #8B0000;
+    transform: scale(1.1);
+    box-shadow: 0px 0px 20px #ffac11;
+}
+
+#person {
+    background-color: transparent;
+    color: #C5A059;
+    border: 2px solid #C5A059;
+    box-shadow: 0px 4px 15px rgba(197, 160, 89, 0.3);
+    
+}
+
+#person:hover {
+    background-color: #C5A059;
+    color: #1a1a1a;
+    transform: scale(1.1);
+    box-shadow: 0px 8px 25px rgba(197, 159, 89, 0.854);
+}
+
+@media (max-width: 600px) {
+    #welcome h1 {
+        font-size: 2rem;
     }
-
-    #repo {
-        background-color: #8B0000; /* Vermelho Condenação */
-        color: white;
-        border: 2px solid #ffac11;
-        
-        &:hover {
-            background-color: #ffac11;
-            color: #8B0000;
-            transform: scale(1.1); /* Dá um zoom de leve ao passar o mouse */
-        }
-    }
-
-    #person {
-        background-color: transparent;
-        color: #C5A059;
-        border: 2px solid #C5A059;
-
-        &:hover {
-            background-color: #C5A059;
-            color: #1a1a1a;
-            transform: scale(1.1);
-        }
+    #start h1 {
+        font-size: 2.5rem;
     }
 }

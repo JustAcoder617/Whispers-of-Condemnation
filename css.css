@@ -140,3 +140,21 @@ body {
         font-size: 2.5rem;
     }
 }
+.cursor {
+    border-right: 3px solid #C5A059;
+    animation: blink 0.7s infinite;
+    margin-left: 5px;
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+::selection {
+    background-color: #C5A059; /* Fundo Dourado */
+    color: #1a1a1a;         
+}
+
+::-moz-selection {
+    background-color: #8B0000;
+    color: #ffffff;
+}

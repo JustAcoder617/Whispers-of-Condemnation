@@ -134,8 +134,14 @@ void jogo(char jg1[], char jg2[], char *user_login) {
         }
     }
     printf("\n----- FIM DE JOGO ------\nVoltando para avaliação...\n");
+    sleep(2);
+    puts("Desculpe, mas por questões legais (modo judial), infelizmente não podemos entrar no processo de avaliação, pois o desenvolvedor está passando por problemas judicias referente a idade do mesmo, mas agradecemos por jogar e esperamos que tenha se divertido! Até a próxima!");
+    sleep(1);
+    puts("Caso você seja um desenvolvedor e queira usar este código para o seu projeto, fique a vontade, mas por favor, ajuste a parte de avaliação para o que for melhor para o seu projeto, e se quiser usar a função de disparar_webhook, ajuste ela para o formato de webhook que você for usar, e se tiver dúvidas, me pergunte na parte de issues do Propio Github! Obrigado por jogar!");
+    sleep(5);
+    exit(0);
 }
-
+/*
 void avaliacao(char *user_login) {
     char pergunta[10];
     printf("\nGostaria de deixar o seu feedback, %s? (sim/nao): ", user_login);
@@ -146,7 +152,7 @@ void avaliacao(char *user_login) {
 
     if (strcasecmp(pergunta, "sim") == 0) {
         char feedback[500];
-        printf("\nO que achou do jogo? ");
+        puts("\nO que achou do jogo? ");
         fgets(feedback, sizeof(feedback), stdin);
         feedback[strcspn(feedback, "\n")] = 0;
 
@@ -166,3 +172,4 @@ void avaliacao(char *user_login) {
         puts("Até a próxima!");
     }
 }
+*/

@@ -97,8 +97,8 @@ O projeto foi desenhado para ser **completamente modular**. Você não baixa um 
 
 | Módulo | Versão | Descrição |
 |--------|--------|-----------|
-| `simple_math.h` | v1.0 | Operações matemáticas fundamentais |
-| `cweb.h` | v1.0 | Sistema de webhooks e criptografia |
+| `simple_math.h` | v1.2 | Operações matemáticas fundamentais |
+| `cweb.h` | v1.3 | Sistema de webhooks e criptografia |
 
 > 🚀 **No cronograma:** módulos de física, colisões e gerenciamento de assets
 

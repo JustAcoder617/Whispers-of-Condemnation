@@ -2,6 +2,6 @@ In file included from ./main.c:8:
 ./modularization/simplemath.h:60:15: warning: return type defaults to ‘int’ [-Wimplicit-int]
    60 | static inline dist2d(double x1, double y1, double x2, double y2){
       |               ^~~~~~
-/usr/bin/ld: /tmp/ccLDwq5Y.o: in function `main':
+/usr/bin/ld: /tmp/cc3WuevI.o: in function `main':
 main.c:(.text+0x254): undefined reference to `avaliacao'
 collect2: error: ld returned 1 exit status

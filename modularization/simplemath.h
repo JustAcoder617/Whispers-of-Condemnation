@@ -57,7 +57,7 @@ static inline int tamanho_check(int var_check, int tamanho_max) {
     if (var_check < tamanho_max) return 0;
     return 1;
 }
-static inline dist2d(double x1, double y1, double x2, double y2){
+static inline double dist2d(double x1, double y1, double x2, double y2){
     return sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
 static inline double quadrado(double x){

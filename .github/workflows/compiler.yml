@@ -2,6 +2,9 @@ name: Workflow de Compilação Automática
 
 on: [push, pull_request]
 
+permissions:
+  contents: write  # Necessário para o robô conseguir criar arquivos no seu repo
+
 jobs:
   check-and-build:
     runs-on: ubuntu-latest
@@ -10,36 +13,51 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Processar arquivos .c
-        # Esta linha garante que a bolinha fique VERDE mesmo se o GCC falhar
-        continue-on-error: true 
+        continue-on-error: true
         run: |
           MSG_SECRETA="//no_compile"
           
+          # Limpa logs antigos para não acumular lixo
+          rm -f erros_*.txt
+          
           for arq in $(find . -name "*.c"); do
             echo "Analisando $arq..."
-            
             if grep -q "$MSG_SECRETA" "$arq"; then
-              echo "[SKIP] $arq contém a mensagem secreta. Pulando..."
+              echo "[SKIP] $arq ignorado."
             else
-              echo "[BUILD] Tentando compilar $arq..."
-              
-              # Tenta compilar e joga o erro para o txt
+              echo "[BUILD] Compilando $arq..."
+              # Tenta compilar e joga o erro no txt
               gcc "$arq" -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt" || true
               
-              # Se o arquivo de erro existir e NÃO estiver vazio (-s)
-              if [ -s "erros_${arq##*/}.txt" ]; then
-                echo "[ERROR] Falha em $arq. Log gerado nos Artifacts."
+              # Se o arquivo de erro estiver vazio, deleta ele
+              if [ ! -s "erros_${arq##*/}.txt" ]; then
+                rm "erros_${arq##*/}.txt"
+                echo "[SUCCESS] $arq OK!"
               else
-                echo "[SUCCESS] $arq compilado com sucesso!"
-                # Remove o arquivo de erro vazio para não poluir o Artifact
-                rm "erros_${arq##*/}.txt" 2>/dev/null || true
+                echo "[ERROR] Falha em $arq. Log criado."
               fi
             fi
           done
 
-      - name: Subir logs de erro
-        # 'if: always()' garante que os logs subam mesmo se o passo anterior falhar
-        if: always() 
+      - name: Commitar erros no repositório
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Adiciona apenas os arquivos de erro que foram gerados
+          git add erros_*.txt || true
+          
+          # Só commita se houver arquivos novos ou alterados
+          if git diff --staged --quiet; then
+            echo "Nenhum erro novo para salvar."
+          else
+            git commit -m "docs: logs de erro de compilação [automático]"
+            git push
+          fi
+
+      - name: Subir logs como Artifact (Backup)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: logs-de-erro-compilacao

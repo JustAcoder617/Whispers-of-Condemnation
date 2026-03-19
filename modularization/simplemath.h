@@ -29,7 +29,7 @@ static inline int Expressao(int n1, int n2, char operacao[]) {
             return 1;
         }
         if (n1==1)
-        {
+        { 
             return 1;
         }
         //para fins de preservação de memória, usamos os if's acima para não ter que usar memória atoa.

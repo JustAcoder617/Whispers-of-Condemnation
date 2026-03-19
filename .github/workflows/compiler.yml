@@ -1,0 +1,45 @@
+name: Workflow de Compilação Automática
+
+on: [push, pull_request]
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Processar arquivos .c
+        run: |
+          # Defina sua mensagem secreta aqui
+          MSG_SECRETA="//no_compile"
+          
+          # Loop por todos os arquivos .c no repositório
+          for arq in $(find . -name "*.c"); do
+            echo "Analisando $arq..."
+            
+            # Checa se a mensagem secreta existe no arquivo
+            if grep -q "$MSG_SECRETA" "$arq"; then
+              echo "[SKIP] $arq contém a mensagem secreta. Pulando..."
+            else
+              echo "[BUILD] Tentando compilar $arq..."
+              
+              # Tenta compilar. 
+              # O '2>' joga os erros para o arquivo .txt com o nome do fonte
+              gcc "$arq" -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt"
+              
+              if [ $? -eq 0 ]; then
+                echo "[SUCCESS] $arq compilado com sucesso!"
+                rm "erros_${arq##*/}.txt" # Deleta o log se deu certo
+              else
+                echo "[ERROR] Falha na compilação de $arq. Log gerado."
+              fi
+            fi
+          done
+
+      - name: Subir logs de erro
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-de-erro-compilacao
+          path: erros_*.txt

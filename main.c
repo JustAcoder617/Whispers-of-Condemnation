@@ -7,10 +7,11 @@
 #include "modularization/cweb.h"
 #include "modularization/simplemath.h"
 
+
 /* * Copyright (C) 2024 - Jogo das Condenações 
  * Licença: GPLv2
  */
-
+ 
 void inicio(char *user_login);
 void jogo(char jg1[], char jg2[], char *user_login);
 void avaliacao(char *user_login);

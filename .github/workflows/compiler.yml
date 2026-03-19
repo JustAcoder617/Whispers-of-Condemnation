@@ -12,7 +12,13 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Processar arquivos .c com Auto-Linker
+      - name: Instalar Dependências do Sistema
+        run: |
+          sudo apt-get update
+          # Aqui você adiciona as libs que seu RPG usa (curl, sqlite, etc)
+          sudo apt-get install -y libcurl4-openssl-dev libsqlite3-dev
+
+      - name: Processar arquivos .c com Super Auto-Linker
         continue-on-error: true
         run: |
           MSG_SECRETA="//no_compile"
@@ -23,24 +29,22 @@ jobs:
             if grep -q "$MSG_SECRETA" "$arq"; then
               echo "[SKIP] $arq ignorado."
             else
-              # --- DETECTOR AUTOMÁTICO DE BIBLIOTECAS ---
-              # -I. faz o GCC procurar seus .h em todas as pastas
-              FLAGS="-I. -I./mods -I./include" 
+              # --- MOTOR DE FLAGS ---
+              FLAGS="-I. -I./mods"
               
-              # Se usar math.h (pow, sqrt, etc), bota -lm
-              grep -q "math.h" "$arq" && FLAGS="$FLAGS -lm"
-              # Se usar pthread.h (multithreading), bota -pthread
-              grep -q "pthread.h" "$arq" && FLAGS="$FLAGS -pthread"
-              # Se usar time.h (timers real-time), bota -lrt
-              grep -q "time.h" "$arq" && FLAGS="$FLAGS -lrt"
-              
+              # Detecta CURL
+              if grep -q "curl/curl.h" "$arq"; then FLAGS="$FLAGS -lcurl"; fi
+              # Detecta Matemática
+              if grep -q "math.h" "$arq"; then FLAGS="$FLAGS -lm"; fi
+              # Detecta Threads
+              if grep -q "pthread.h" "$arq"; then FLAGS="$FLAGS -pthread"; fi
+
               echo "[BUILD] Compilando $arq com flags: $FLAGS"
               
-              # Tenta compilar com as libs detectadas
               gcc "$arq" $FLAGS -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt" || true
               
               if [ -s "erros_${arq##*/}.txt" ]; then
-                echo "[ERROR] Falha em $arq. Log gerado."
+                echo "[ERROR] Falha em $arq."
               else
                 rm -f "erros_${arq##*/}.txt"
                 echo "[SUCCESS] $arq OK!"
@@ -54,20 +58,13 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
+          # Sincroniza para evitar o erro de 'divergent branches'
+          git pull origin main --no-rebase || true
+          
           if ls erros_*.txt 1> /dev/null 2>&1; then
-            # Puxa mudanças caso o repo tenha atualizado durante o build
-            git pull origin main --no-rebase || true
             git add erros_*.txt
             git commit -m "docs: logs de erro de compilação [automático]"
-            git push
+            git push origin main || (git pull origin main --no-rebase && git push origin main)
           else
-            echo "Nenhum erro encontrado para salvar."
+            echo "Nenhum erro encontrado."
           fi
-
-      - name: Subir logs como Artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: logs-de-erro-compilacao
-          path: erros_*.txt
-          if-no-files-found: ignore

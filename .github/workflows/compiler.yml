@@ -12,13 +12,10 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Processar arquivos .c
-        # ESSA LINHA É A CHAVE: Ela impede que o erro pare o workflow
+      - name: Processar arquivos .c com Auto-Linker
         continue-on-error: true
         run: |
           MSG_SECRETA="//no_compile"
-          
-          # Remove logs antigos se existirem
           rm -f erros_*.txt
           
           for arq in $(find . -name "*.c"); do
@@ -26,12 +23,24 @@ jobs:
             if grep -q "$MSG_SECRETA" "$arq"; then
               echo "[SKIP] $arq ignorado."
             else
-              echo "[BUILD] Compilando $arq..."
-              # O '|| true' garante que o script continue mesmo se o gcc falhar
-              gcc "$arq" -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt" || true
+              # --- DETECTOR AUTOMÁTICO DE BIBLIOTECAS ---
+              # -I. faz o GCC procurar seus .h em todas as pastas
+              FLAGS="-I. -I./mods -I./include" 
+              
+              # Se usar math.h (pow, sqrt, etc), bota -lm
+              grep -q "math.h" "$arq" && FLAGS="$FLAGS -lm"
+              # Se usar pthread.h (multithreading), bota -pthread
+              grep -q "pthread.h" "$arq" && FLAGS="$FLAGS -pthread"
+              # Se usar time.h (timers real-time), bota -lrt
+              grep -q "time.h" "$arq" && FLAGS="$FLAGS -lrt"
+              
+              echo "[BUILD] Compilando $arq com flags: $FLAGS"
+              
+              # Tenta compilar com as libs detectadas
+              gcc "$arq" $FLAGS -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt" || true
               
               if [ -s "erros_${arq##*/}.txt" ]; then
-                echo "[ERROR] Falha em $arq. Log criado."
+                echo "[ERROR] Falha em $arq. Log gerado."
               else
                 rm -f "erros_${arq##*/}.txt"
                 echo "[SUCCESS] $arq OK!"
@@ -45,13 +54,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Verifica se existem arquivos de erro antes de tentar o git add
           if ls erros_*.txt 1> /dev/null 2>&1; then
+            # Puxa mudanças caso o repo tenha atualizado durante o build
+            git pull origin main --no-rebase || true
             git add erros_*.txt
             git commit -m "docs: logs de erro de compilação [automático]"
             git push
           else
-            echo "Nenhum erro encontrado para commitar."
+            echo "Nenhum erro encontrado para salvar."
           fi
 
       - name: Subir logs como Artifact

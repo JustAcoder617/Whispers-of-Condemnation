@@ -7,7 +7,6 @@
 #include "modularization/cweb.h"
 #include "modularization/simplemath.h"
 
-
 /* * Copyright (C) 2024 - Jogo das Condenações 
  * Licença: GPLv2
  */
@@ -136,13 +135,9 @@ void jogo(char jg1[], char jg2[], char *user_login) {
     }
     printf("\n----- FIM DE JOGO ------\nVoltando para avaliação...\n");
     sleep(2);
-    puts("Desculpe, mas por questões legais (modo judial), infelizmente não podemos entrar no processo de avaliação, pois o desenvolvedor está passando por problemas judicias referente a idade do mesmo, mas agradecemos por jogar e esperamos que tenha se divertido! Até a próxima!");
-    sleep(1);
-    puts("Caso você seja um desenvolvedor e queira usar este código para o seu projeto, fique a vontade, mas por favor, ajuste a parte de avaliação para o que for melhor para o seu projeto, e se quiser usar a função de disparar_webhook, ajuste ela para o formato de webhook que você for usar, e se tiver dúvidas, me pergunte na parte de issues do Propio Github! Obrigado por jogar!");
-    sleep(5);
-    exit(0);
+    puts("Fim da sessão judiciária.");
 }
-/*
+
 void avaliacao(char *user_login) {
     char pergunta[10];
     printf("\nGostaria de deixar o seu feedback, %s? (sim/nao): ", user_login);
@@ -162,15 +157,12 @@ void avaliacao(char *user_login) {
         scanf("%d", &stars);
 
         int check_webhook = disparar_webhook(feedback, user_login, stars);
-        if (check_webhook==1)
-        {
+        if (check_webhook == 1) {
             puts("Não foi possível enviar seu feedback, mas agradecemos por jogar!");
-            exit(1);
+        } else {
+            puts("\nObrigado pelo feedback! Ele foi enviado com sucesso!");
         }
-        puts("\nObrigado pelo feedback! Ele foi enviado com sucesso!");
-        
     } else {
         puts("Até a próxima!");
     }
 }
-*/

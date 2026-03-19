@@ -125,7 +125,7 @@ void jogo(char jg1[], char jg2[], char *user_login) {
                 } else {
                     printf("\n%s\n", frases_falha[rand() % 4]);
                 }
-            } 
+            }  
 
             turno = (turno == 1) ? 2 : 1;
         } else {

@@ -11,28 +11,28 @@ jobs:
 
       - name: Processar arquivos .c
         run: |
-          # Defina sua mensagem secreta aqui
+          # Mensagem curta que você escolheu
           MSG_SECRETA="//no_compile"
           
-          # Loop por todos os arquivos .c no repositório
+          # Loop por todos os arquivos .c
           for arq in $(find . -name "*.c"); do
             echo "Analisando $arq..."
             
-            # Checa se a mensagem secreta existe no arquivo
+            # Checa a mensagem secreta
             if grep -q "$MSG_SECRETA" "$arq"; then
               echo "[SKIP] $arq contém a mensagem secreta. Pulando..."
             else
               echo "[BUILD] Tentando compilar $arq..."
               
-              # Tenta compilar. 
-              # O '2>' joga os erros para o arquivo .txt com o nome do fonte
-              gcc "$arq" -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt"
+              # O '|| true' faz o script continuar mesmo se a compilação falhar
+              gcc "$arq" -o "${arq%.c}.out" 2> "erros_${arq##*/}.txt" || true
               
-              if [ $? -eq 0 ]; then
-                echo "[SUCCESS] $arq compilado com sucesso!"
-                rm "erros_${arq##*/}.txt" # Deleta o log se deu certo
+              # Verifica se o arquivo de erro tem conteúdo (se o GCC escreveu algo lá)
+              if [ -s "erros_${arq##*/}.txt" ]; then
+                echo "[ERROR] Falha na compilação de $arq. Verifique os logs nos Artifacts."
               else
-                echo "[ERROR] Falha na compilação de $arq. Log gerado."
+                echo "[SUCCESS] $arq compilado com sucesso!"
+                rm "erros_${arq##*/}.txt" 2>/dev/null || true
               fi
             fi
           done
@@ -42,4 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: logs-de-erro-compilacao
+          # Ele vai pegar todos os erros_...txt que restaram
           path: erros_*.txt
+          # Não deixa o workflow falhar se não houver nenhum erro para subir
+          if-no-files-found: ignore

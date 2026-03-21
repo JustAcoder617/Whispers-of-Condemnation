@@ -13,6 +13,7 @@ int main(void){
     cout <<"Olá," <<nome<<"! bem vindo! redirecionando ao jogo principal...";
     game(nome);
 }
+void game(string player1);
 int jg1vivo=1;
 int jg2vivo=1;
 int vez=1;

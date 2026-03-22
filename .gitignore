@@ -5,6 +5,6 @@ dev_itens/
 *.env
 
 how_to_unlock.md
-cpp_version/
+cpp_version/mods
 mods/
 *.cpp

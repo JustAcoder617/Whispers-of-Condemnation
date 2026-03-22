@@ -5,7 +5,7 @@
 #include <fstream>
 #include <ctime>
 #include <curl/curl.h>
-
+//ATENTION: DEPRECATED WITH BUGS
 using namespace std;
 
 int sorteio(int jg);

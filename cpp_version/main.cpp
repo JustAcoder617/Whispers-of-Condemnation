@@ -82,3 +82,50 @@ int sorteio(int jg) {
     if (s == 1) chance = 25;
     else if (s == 2) chance = 50;
     else if (s == 3) chance = 75;
+    else chance = 100;
+
+    uniform_int_distribution<> d100(1, 100);
+    if (d100(gen) <= chance) {
+        if (jg == 1) jg2vivo = 0;
+        else jg1vivo = 0;
+        return 1;
+    }
+    return 0;
+}
+
+void avaliacao(string nome_jogador) {
+    cout << "\nGostaria de avaliar o nosso jogo? (1. Sim | 2. Não): ";
+    string choice;
+    cin >> choice;
+    if (choice == "1") {
+        cout << "Digite sua mensagem: ";
+        string msg;
+        cin.ignore();
+        getline(cin, msg);
+        time_t agora = time(0);
+        char* dt = ctime(&agora);
+        string data_hora(dt);
+        if (!data_hora.empty()) data_hora.pop_back();
+        string json_payload = "{\"content\": \"**Nova Avaliação!**\\n**Usuário:** " + nome_jogador + 
+                              "\\n**Mensagem:** " + msg + 
+                              "\\n**Data/Hora:** " + data_hora + "\"}";
+        string url_webhook = get_url_from_assets();
+        if (!url_webhook.empty()) {
+            CURL* curl = curl_easy_init();
+            if(curl) {
+                struct curl_slist* headers = NULL;
+                headers = curl_slist_append(headers, "Content-Type: application/json");
+                curl_easy_setopt(curl, CURLOPT_URL, url_webhook.c_str());
+                curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+                curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_payload.c_str());
+                CURLcode res = curl_easy_perform(curl);
+                if(res == CURLE_OK) cout << "\nObrigado! Feedback enviado.\n";
+                else cout << "\nErro no envio do feedback.\n";
+                curl_easy_cleanup(curl);
+                curl_slist_free_all(headers);
+            }
+        }
+    } else {
+        cout << "Ok! Até mais!\n";
+    }
+}

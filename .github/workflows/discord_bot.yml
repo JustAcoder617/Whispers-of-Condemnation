@@ -22,7 +22,7 @@ jobs:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           embed-color: 3447003
           embed-thumbnail-url: "https://github.githubassets.com/images/modules/logos_page/Octocat.png"
-          content: "😎️😏️🏗️💯️💻️🔥️: @everyone, ANOTHER LEGEND JUST PUSHED CODE!"
+          content: "😎️😏️🏗️💯️💻️🔥️ :ANOTHER LEGEND JUST PUSHED CODE!"
           embed-description: |
             The GOAT ```fix
             ${{ github.actor }}

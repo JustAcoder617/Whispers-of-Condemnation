@@ -28,20 +28,8 @@ void game(string player1) {
     cin >> player2;
     cout << "\nComeçando os jogos...\n";
 
-    bool first_round = true;
-
     while (jg1vivo == 1 && jg2vivo == 1) {
-        if (first_round) {
-            cout << "\n" << player1 << ", escolha: 1.condenar 2.passar o martelo: ";
-            string choice;
-            cin >> choice;
-            if (choice == "1") {
-                if (sorteio(1) == 0) cout << "O martelo falhou...\n";
-            }
-            vez = 0;
-            first_round = false;
-        } 
-        else if (vez == 1) {
+        if (vez == 1) {
             cout << "\n" << player1 << ", escolha: 1.condenar 2.passar: ";
             string choice;
             cin >> choice;
@@ -50,7 +38,7 @@ void game(string player1) {
             }
             vez = 0;
         } 
-        else if (vez == 0) {
+        else {
             cout << "\n" << player2 << ", escolha: 1.condenar 2.passar: ";
             string choice;
             cin >> choice;
@@ -62,7 +50,7 @@ void game(string player1) {
     }
 
     if (jg1vivo == 0) cout << "\n" << player2 << " GANHOU O JOGO!\n";
-    else if (jg2vivo == 0) cout << "\n" << player1 << " GANHOU O JOGO!\n";
+    else cout << "\n" << player1 << " GANHOU O JOGO!\n";
 }
 
 int sorteio(int jg) {

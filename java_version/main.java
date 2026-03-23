@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 public class main {
     public static void main(String[] args) {
         things.print("Olá! Bem-vindo ao Whispers-Of-Condemnation!");
@@ -17,7 +18,7 @@ public class main {
     public static void jogo(Object player1, Object player2) {
         int jg1vivo = 1;
         int jg2vivo = 1;
-        int vez = 1; // 1 para Jogador 1, 2 para Jogador 2
+        int vez = 1;
 
         while (jg1vivo == 1 && jg2vivo == 1) {
             String nomeAtual = (vez == 1) ? player1.toString() : player2.toString();
@@ -27,19 +28,14 @@ public class main {
             int escolha = (int) things.scanf("i");
 
             if (escolha == 1) {
-                // Sorteia a dificuldade do martelo (1 a 3)
                 int dificuldade = (int) (Math.random() * 3) + 1;
                 boolean matou = false;
 
-                // Exemplo simplificado de lógica de chance
                 if (dificuldade == 1) {
-                    // 25% de chance (seu array {'s','n','n','n'})
                     matou = Math.random() < 0.25;
                 } else if (dificuldade == 2) {
-                    // 50% de chance
                     matou = Math.random() < 0.50;
                 } else {
-                    // 75% de chance
                     matou = Math.random() < 0.75;
                 }
 
@@ -50,27 +46,49 @@ public class main {
                     things.print("O martelo falhou... A sorte mudou.");
                 }
             }
-
-            // Alterna a vez: se era 1 vira 2, se era 2 vira 1
             vez = (vez == 1) ? 2 : 1;
         }
 
-        things.print("Fim da sessão de julgamento.");
+        things.print("\nFim da sessão de julgamento.");
         things.print("...");
-        avaliation();
+
+        // Passamos o player1 para a avaliação para registrar quem deu o feedback
+        avaliation(player1);
     }
-    public static void avaliation(){
-        String conteudo="a";
-        String real="z";
+
+    public static void avaliation(Object player) {
+        String conteudo = "";
+        String urlReal = "";
+
         try {
+            // Lendo a URL criptografada do arquivo config.txt no seu Zorin
             Path caminho = Path.of("config.txt");
             conteudo = Files.readString(caminho);
-            real=javaweb.descriptografar(conteudo, 42);
+            urlReal = javaweb.descriptografar(conteudo, 42);
         } catch (Exception e) {
-            System.out.println("Erro ao abrir o arquivo: " + e.getMessage());
+            System.out.println("Erro ao abrir as configurações: " + e.getMessage());
             return;
         }
-        things.print("Gostaria de deixar sua opnião sobre o nosso jogo? (1.sim 2.não)");
-        int  choice=things.//parado para manuntenção
+
+        things.print("Gostaria de deixar sua opinião sobre o nosso jogo? (1.sim 2.não)");
+        int choice = (int) things.scanf("i");
+
+        if (choice == 1) {
+            things.print("Digite sua opinião: ");
+            Object opiniao = things.scanf("s");
+
+            // Criando o JSON estruturado para enviar via Webhook
+            String jsonDados = "{" +
+                    "\"jogador\":\"" + player.toString() + "\"," +
+                    "\"feedback\":\"" + opiniao.toString() + "\"," +
+                    "\"os\":\"Zorin OS\"," +
+                    "\"hardware\":\"Acer Aspire 5\"" +
+                    "}";
+
+            // Dispara o webhook de forma assíncrona (não trava o jogo)
+            javaweb.dispararWebhook(urlReal, jsonDados);
+
+            things.print("Opiniao enviada com sucesso para o servidor!");
+        }
     }
 }

@@ -8,3 +8,4 @@ how_to_unlock.md
 cpp_version/mods
 mods/
 *.cpp
+.idea/

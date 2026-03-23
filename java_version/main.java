@@ -70,6 +70,7 @@ public class main {
             System.out.println("Erro ao abrir o arquivo: " + e.getMessage());
             return;
         }
-
+        things.print("Gostaria de deixar sua opnião sobre o nosso jogo? (1.sim 2.não)");
+        int  choice=things.//parado para manuntenção
     }
 }

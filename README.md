@@ -2,7 +2,7 @@
 
 # 🎮 Whispers of Condemnation
 ### O Motor por trás da Diversão!
-
+### **Arquivado como projeto do criador**
 ![C](https://img.shields.io/badge/Language-C-blue?style=for-the-badge&logo=c)
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge)
 [![GNU GPLv2](https://img.shields.io/badge/license%20of%20the%20game-GNU%20GPLv2-blue?style=for-the-badge)](LICENSE)
